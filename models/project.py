@@ -44,7 +44,8 @@ class Project:
     @due_date.setter
     def due_date(self, new_due_date):
         if not isinstance(new_due_date, str):
-            raise ValueError("Due date cannot be a string.")
+            raise ValueError("Due date must be a string.")
+        new_due_date = new_due_date.strip()
         try:
             datetime.strptime(new_due_date, "%Y-%m-%d")
         except ValueError:
@@ -75,6 +76,22 @@ class Project:
     @classmethod
     def all(cls):
         return list(cls._projects.values())
+    
+    def add_task(self, task):
+        if task.project_id not in (None, self.project_id):
+            raise ValueError("This task already belongs to another project.")
+        if task.task_id not in self.task_ids:
+            self.task_ids.append(task.task_id)
+
+        task.project_id = self.project_id
+        
+    def remove_task(self, task):
+        if task.task_id in self.task_ids:
+            self.task_ids.remove(task.task_id)
+            task.project_id = None
+    
+        
+        
 
     def to_dict(self):
         return {
@@ -83,7 +100,7 @@ class Project:
             "description": self.description,
             "due_date": self.due_date,
             "user_id": self.user_id,
-            "task_ids": self.task_ids
+            "task_ids": list(self.task_ids)
         }
 
     def __repr__(self):
