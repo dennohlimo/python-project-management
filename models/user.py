@@ -62,13 +62,18 @@ class User(Person):
             self.project_ids.append(project.project_id)
 
         project.user_id = self.user_id
+        
+    def remove_project(self, project):
+        if project.project_id in self.project_ids:
+            self.project_ids.remove(project.project_id)
+            project.user_id = None
 
     def to_dict(self):
         return {
             "user_id": self.user_id,
             "name": self.name,
             "email": self.email,
-            "project_ids": self.project_ids
+            "project_ids": list(self.project_ids)
         }
 
     def __repr__(self):
