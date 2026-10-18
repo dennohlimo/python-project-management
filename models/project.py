@@ -85,13 +85,6 @@ class Project:
 
         task.project_id = self.project_id
         
-    def remove_task(self, task):
-        if task.task_id in self.task_ids:
-            self.task_ids.remove(task.task_id)
-            task.project_id = None
-    
-        
-        
 
     def to_dict(self):
         return {
@@ -102,6 +95,18 @@ class Project:
             "user_id": self.user_id,
             "task_ids": list(self.task_ids)
         }
+    @classmethod
+    def from_dict(cls, data):
+        project = cls(
+            data["project_id"],
+            data["title"],
+            data["description"],
+            data["due_date"],
+        )
+        project.user_id = data.get("user_id")
+        project.task_ids = list(data.get("task_ids", []))
+        cls._projects[project.project_id] = project
+        return project
 
     def __repr__(self):
         return (
