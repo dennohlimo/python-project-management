@@ -27,7 +27,6 @@ class User(Person):
 
         if not re.fullmatch(r"[\w.-]+@[\w.-]+\.[A-Za-z]{2,}", new_email):
             raise ValueError("Please enter a valid email.")
-
         self._email = new_email
 
     @classmethod
@@ -63,10 +62,7 @@ class User(Person):
 
         project.user_id = self.user_id
         
-    def remove_project(self, project):
-        if project.project_id in self.project_ids:
-            self.project_ids.remove(project.project_id)
-            project.user_id = None
+    
 
     def to_dict(self):
         return {
@@ -76,6 +72,13 @@ class User(Person):
             "project_ids": list(self.project_ids)
         }
 
+    @classmethod
+    def from_dict(cls, data):
+        user = cls(data["user_id"], data["name"], data["email"])
+        user.project_ids = list(data.get("project_ids", []))
+        cls._users[user.user_id] = user
+        return user
+    
     def __repr__(self):
         return (
             f"User(user_id={self.user_id!r}, "

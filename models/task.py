@@ -74,6 +74,13 @@ class Task:
             "assigned_to": self.assigned_to,
             "project_id": self.project_id
         }
+    @classmethod
+    def from_dict(cls, data):
+        task = cls(data["task_id"], data["title"], data["assigned_to"])
+        task.status = data.get("status", "pending")
+        task.project_id = data.get("project_id")
+        cls._tasks[task.task_id] = task
+        return task
 
     def __repr__(self):
         return (
